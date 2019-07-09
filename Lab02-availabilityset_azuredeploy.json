@@ -27,10 +27,21 @@
             "metadata": {
                 "description": "number of VMs to create"
             }
+        },
+        "subnetname": {
+            "type": "string",
+            "defaultValue": "subnet0",
+            "metadata": {
+                "description": "name of the subnet"
+            }
         }
     },
     "variables": {
-        "availabilitySetName": "[concat(parameters('SolutionNamePrefix'),'-avset1')]"
+        "rgName": "[resourceGroup().name]",
+        "availabilitySetName": "[concat(parameters('SolutionNamePrefix'),'-avset1')]",
+        "numberOfInstances": "[parameters('VMCount')]",
+        "vnetID": "[resourceId(variables('rgName'), 'Microsoft.Network/virtualNetworks', concat(parameters('SolutionNamePrefix'),'-vnet'))]",   
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters ('subnetName'))]"
     },
     "resources": [
         {
@@ -48,8 +59,33 @@
                 "platformFaultDomainCount": 2,
                 "platformUpdateDomainCount": 5
             }
+        },
+        {
+            "type": "Microsoft.Network.networkInterfaces",
+            "name": "[concat(parameters('SolutionNamePrefix'),'nic',copyIndex())]",
+            "apiVersion": "2018-08-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('numberOfInstances')]"
+            },
+            "tags": {
+                "Solution": "[parameters('SolutionNamePrefix')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
         }
-
     ],
     "outputs": {}
 }
