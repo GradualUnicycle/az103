@@ -23,7 +23,7 @@
         },
         "VMCount": {
             "type": "int",
-            "defaultValue": "2",
+            "defaultValue": 2,
             "metadata": {
                 "description": "number of VMs to create"
             }
@@ -61,8 +61,8 @@
             }
         },
         {
-            "type": "Microsoft.Network.networkInterfaces",
-            "name": "[concat(parameters('SolutionNamePrefix'),'nic',copyIndex())]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('SolutionNamePrefix'),'-nic',copyIndex())]",
             "apiVersion": "2018-08-01",
             "location": "[resourceGroup().location]",
             "copy": {
