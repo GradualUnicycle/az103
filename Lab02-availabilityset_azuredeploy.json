@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SolutionNamePrefix": {
+            "type": "string",
+            "defaultValue": "AZ103",
+            "metadata": {
+                "description": "Solution Name, used to name everything else; e.g. [solutionPrefix]-RG"
+            }
+        },
+        "adminUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin Username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "AdminPassword"
+            }
+        },
+        "VMCount": {
+            "type": "int",
+            "defaultValue": "2",
+            "metadata": {
+                "description": "number of VMs to create"
+            }
+        }
+    },
+    "variables": {
+        "availabilitySetName": "[concat(parameters('SolutionNamePrefix'),'-avset1')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySetName')]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "solution": "[parameters('SolutionNamePrefix')]"
+            },
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 5
+            }
+        }
+
+    ],
+    "outputs": {}
+}
