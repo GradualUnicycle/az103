@@ -72,6 +72,7 @@
             "tags": {
                 "Solution": "[parameters('SolutionNamePrefix')]"
             },
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -92,7 +93,7 @@
             "apiVersion": "2018-08-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "SolutionName": "[parameters('SolutionNamePrefix')]"
+                "Solution": "[parameters('SolutionNamePrefix')]"
             },
             "properties": {
                 "addressSpace": {
@@ -100,7 +101,24 @@
                         "10.0.0.0/16"
                     ]
                 }
-            }
+            },
+            "resources": [
+                {
+                    "type": "subnets",
+                    "name": "default",
+                    "apiVersion": "2018-08-01",
+                    "location": "[resourceGroup().location]",
+                    "tags": {
+                        "solution": "[parameters('SolutionNamePrefix')]"
+                    },
+                    "dependsOn":[
+                        "[concat(parameters('SolutionNamePrefix'),'-vnet')]"
+                    ] ,
+                    "properties": {
+                        "addressPrefix": "10.0.1.0/24"
+                    }
+                }
+            ]
         }
     ],
     "outputs": {}
